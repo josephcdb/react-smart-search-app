@@ -1,15 +1,30 @@
 import { useState, useEffect, useMemo, useTransition } from 'react'
+import { useUsers } from "./hooks/useUsers"
+import { useSearch } from "./hooks/useSearch"
+import SearchInput from "./components/SearchInput"
+import UserList from "./components/UserList"
 import './App.css'
 
 function App() {
+  const { users, loading } = useUsers();
+  const { inputValue, handleChange, filteredUsers, isPending } =
+    useSearch(users);
+
+  if (loading) return <p>Loading users...</p>;
+
   return (
-    <>
+    <div>
+      <h2>Smart Search App</h2>
       <UseStateHook />
       <UseEffectHook />
       <UseMemoHook />
       <UseTransitionHook />
-    </>
-  )
+      {/* New components - SearchInput and UserList */}
+      <SearchInput value={inputValue} onChange={handleChange} />
+      {isPending && <p>Searching...</p>}
+      <UserList users={filteredUsers} />
+    </div>
+  );
 }
 
 // UseState Hook to store the input
@@ -51,9 +66,14 @@ function UseEffectHook() {
     <div>
       <h3>Use Effect and State Hook to filter the user</h3>
       <label htmlFor="search-input-2">Enter: </label>
-      <input htmlFor="search-input-2" onChange={e => setQuery(e.target.value)} />
+      <input 
+        id="search-input-2"
+        placeholder="Search..."
+        htmlFor="search-input-2"
+        onChange={e => setQuery(e.target.value)} />
       <p>{users.length} users loaded</p>
       <p>Searching User for: {query}</p>
+      <h3>List of users:</h3>
       <ul>
         {filteredUsers.map(user => (
           <li key={user.id}>{user.name}</li>
@@ -86,9 +106,14 @@ function UseMemoHook() {
     <div>
       <h3>Use Memo Hook to filter the user</h3>
       <label htmlFor="search-input-3">Enter: </label>
-      <input htmlFor="search-input-3" onChange={e => setQuery(e.target.value)} />
+      <input
+        id="search-input-3"
+        placeholder="Search..."
+        htmlFor="search-input-3"
+        onChange={e => setQuery(e.target.value)} />
       <p>{users.length} users loaded</p>
       <p>Searching User for: {query}</p>
+      <h3>List of users:</h3>
       <ul>
         {filteredUsers.map(user => (
           <li key={user.id}>{user.name}</li>
@@ -135,12 +160,17 @@ function UseTransitionHook() {
     <div>
       <h3>UseTransition Hook</h3>
 
-      <input onChange={handleChange} value={inputValue} />
+      <label htmlFor="search-input-4">Enter: </label>
+      <input
+        id="search-input-4"
+        placeholder="Search..."
+        onChange={handleChange} value={inputValue} />
 
       {isPending && <p>Searching...</p>}
 
       <p>{users.length} users loaded</p>
 
+      <h3>List of users:</h3>
       <ul>
         {filteredUsers.map(user => (
           <li key={user.id}>{user.name}</li>
